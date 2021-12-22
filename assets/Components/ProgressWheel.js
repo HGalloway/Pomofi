@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import Timer from "./Timer"
+import Timer from "./Timer/Timer"
 
 
-export default function ProgressWheel(String) {
+export default function ProgressWheel() {
     return (
       <View style={styles.container}>
         <View id="OutsideCircle" style={styles.OutsideCircle}>
@@ -15,7 +15,7 @@ export default function ProgressWheel(String) {
             }]}>
                 
             </View>
-            <Timer InitialTime="10.00"></Timer>
+            <Timer InitMin="2" InitSec="5"></Timer>
         </View>
       </View>
     );
