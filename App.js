@@ -1,22 +1,56 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import ProgressWheel from './assets/Components/ProgressWheel'
-import Timer from './assets/Components/Timer/Timer';
+import { StyleSheet } from 'react-native';
 
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Settings from './assets/Screens/Settings';
+import Pomo from './assets/Screens/Pomo'
+import Meditation from './assets/Screens/Meditation'
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Timer Time="60"/>
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === 'Pomo') {
+            iconName = "timer-outline";
+          } 
+          else if (route.name === 'Meditation') {
+            iconName = "rose-outline";
+          }
+          else if (route.name === 'Settings') {
+            iconName = "settings-outline";
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: 'pink',
+        tabBarInactiveTintColor: 'gray',
+        headerShown: false, 
+        tabBarAllowFontScaling: false,
+      })}>
+        <Tab.Screen name="Pomo" component={Pomo}/>
+        <Tab.Screen name="Meditation" component={Meditation}/>
+        <Tab.Screen name="Settings" component={Settings}/>
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+let Styles = StyleSheet.create({
+  TabNavigation: {
+    position: 'absolute',
+    left: 10,
+    right: 10,
+    top: 20,
+    bottom: 25,
+    elevation: 0,
+    borderRadius: 20,
+    backgroundColor: "rgb(220,220,220)"
+  }
+})

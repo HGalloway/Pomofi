@@ -7,34 +7,38 @@ const TimerSettingsDatabase = SQLite.openDatabase("TimerSettings");
 TimerSettingsDatabase.transaction(tx => {
   tx.executeSql(
     "create table if not exists TimerSettings (Setting varchar(65535), Value varchar(65535))",
-    [],
-    (t, Output) => {console.log("Success: " + JSON.stringify(Output))},
-    (t, Error) => {console.log("Fail: " + Error)}
+  );
+  tx.executeSql(
+    "delete from TimerSettings",
   );
 })
 
-TimerSettingsDatabase.transaction(tx => {
-  tx.executeSql(
-    "select * from TimerSettings",
-    [],
-    (t, Output) => {console.log("Success: " + JSON.stringify(Output))},
-    (t, Error) => {console.log("Fail: " + Error)}
-  );
-})
+var FreshUpdate = false
 
 export default function Timer(props) {
   const [SecondsLeft, SetSecondsLeft] = useState()
-  const [TimeFormatted, SetFormattedTime] = useState()
   const [IsTimerOn, SetIsTimerOn] = useState()
-  const [TimeGoingIntoBackground, SetTimeGoingIntoBackground] = useState()
+  const [ButtonText, SetButtonText] = useState("Start")
+  const [BreakOrWorkTime, SetBreakOrWorkTime] = useState("Work")
 
-  
-  
   useEffect(async () => {
     console.log("Setting Var")
     //Set State Variables
-    SetSecondsLeft(props.Time)
+    SetSecondsLeft(props.WorkTime)
     SetIsTimerOn(false)
+
+    //Set Settings in database
+    TimerSettingsDatabase.transaction(tx => {
+      tx.executeSql(
+        "insert into TimerSettings (setting, value) values ('IsTimerOn', 'false')",
+      );
+      tx.executeSql(
+        "insert into TimerSettings (setting, value) values ('BackgroundTime', '')",
+      );
+      tx.executeSql(
+        "insert into TimerSettings (setting, value) values ('SecondsLeft', '" + props.Time + "')",
+      );
+    })
 
     //Background/Foreground Handler
     const subscription = AppState.addEventListener(
@@ -49,95 +53,106 @@ export default function Timer(props) {
   const handleAppStateChange = (nextAppState) => {
     if (nextAppState === 'active') {
       console.log('Foreground')
-      CalculateDifferenceBetweenTimes()
+      
+      TimerSettingsDatabase.transaction(tx => {
+        tx.executeSql(
+          "select * from TimerSettings",
+          [],
+          (t, Output) => {
+            UpdateTime(Output)
+          },
+          (t, Error) => {console.log("Fail: " + Error)}
+        )
+      })
     } 
     else if (nextAppState === 'inactive') {
       console.log('Background')
-      SaveDiffrenceVariables()
+      
+      TimerSettingsDatabase.transaction(tx => {
+        tx.executeSql("UPDATE TimerSettings SET Value='" + Date.now() + "' WHERE Setting='BackgroundTime'",)
+      })
    }
   }
 
-  const SaveDiffrenceVariables = async () => {
-
+ 
+  function UpdateTime(SQLOutput) {
+    var TimerOn = JSON.parse(Object.values(SQLOutput.rows.item(0))[1])
+    var BackgroundTime = Object.values(SQLOutput.rows.item(1))[1]
+    var SecondsLeftBeforeBackgrounded = Object.values(SQLOutput.rows.item(2))[1]
+    var SecondsDifference = Math.floor((Date.now() - BackgroundTime)/1000)
     
-  }
+    console.log("Seconds Left Before Back: " + SecondsLeftBeforeBackgrounded)
 
-  var BackgroundTime;
-  var TimerOn;
-
-  function CalculateDifferenceBetweenTimes(){
-    GetDifferenceVariables()
-  }
-
-  const GetDifferenceVariables = async () => {
-    // BackgroundTime = await AsyncStorage.getItem("BackgroundTime").then((Value) => {return Value})
-    // TimerOn
-    CurrentTime = Date.now() 
-    console.log("TimerOn: " + TimerOn)
-  }
-
-  useEffect(() => {
-    FormatSecondsLeft()
-  }, [SecondsLeft])
-
-  useEffect(() => {
-    TimerSettingsDatabase.transaction(tx => {
-      tx.executeSql(
-        "insert into TimerSettings (setting, value) values ('IsTimerOn', '" + IsTimerOn + "')",
-        [],
-        (t, Output) => {console.log("Success: " + JSON.stringify(Output))},
-        (t, Error) => {console.log("Fail: " + Error)}
-      );
-    })
-  }, [IsTimerOn])
-
-  var Hours
-  var Minutes
-  var Seconds
-  function FormatSecondsLeft() {
-    var dateObj = new Date(SecondsLeft * 1000)
-    Hours = dateObj.getUTCHours()
-    Minutes = dateObj.getUTCMinutes()
-    Seconds = dateObj.getSeconds()
-    CheckForSingleDigits()
-    SetFormattedTime(
-      Hours.toString() + ':' + Minutes.toString() + ':' + Seconds.toString(),
-    )
-  }
-
-  function CheckForSingleDigits() {
-    if (Hours.toString().length == 1) {
-      Hours = '0' + Hours
-    }
-    if (Minutes.toString().length == 1) {
-      Minutes = '0' + Minutes
-    }
-    if (Seconds.toString().length == 1) {
-      Seconds = '0' + Seconds
+    if (TimerOn == true) {
+      var SecondsDifference = Math.floor((Date.now() - BackgroundTime)/1000)
+      var SecondsLeftAfterDiffy = SecondsLeftBeforeBackgrounded - SecondsDifference
+      console.log("Seconds Difference: " + SecondsDifference)
+      console.log("SecondsLeft: " + SecondsLeftAfterDiffy)
+      SetSecondsLeft(() => {
+        if (SecondsLeftAfterDiffy > 0) return SecondsLeftAfterDiffy
+        else {
+          if (BreakOrWorkTime == "Work") {
+            SetBreakOrWorkTime("Break")
+            return props.BreakTime
+          }
+          else if (BreakOrWorkTime == "Break"){
+            SetBreakOrWorkTime("Work")
+            return props.WorkTime
+          }
+        }
+      })      
+      FreshUpdate = true
+      console.log("Finished Updating Time From Background")
     }
   }
 
   useEffect(() => {
     setTimeout(() => {
-      if (IsTimerOn == true) {
-        CountDown()
-      }
+      CountDown()
     }, 1000)
   })
 
   function CountDown() {
-    SetSecondsLeft(() => {
-      if (SecondsLeft > 0) return SecondsLeft - 1
-      else return 0
-    })
+    if (FreshUpdate == false){
+      if (IsTimerOn == true){
+        SetSecondsLeft(() => {
+          if (SecondsLeft > 0) return SecondsLeft - 1
+          else {
+            if (BreakOrWorkTime == "Work") {
+              SetBreakOrWorkTime("Break")
+              return props.BreakTime
+            }
+            else if (BreakOrWorkTime == "Break"){
+              SetBreakOrWorkTime("Work")
+              return props.WorkTime
+            }
+          }
+        })
+      }
+    }
+    else{
+      FreshUpdate = false
+    }
   }
+
+  useEffect(() => {
+    TimerSettingsDatabase.transaction(tx => {
+      tx.executeSql("UPDATE TimerSettings SET Value='" + SecondsLeft + "' WHERE Setting='SecondsLeft'",)
+    })
+  }, [SecondsLeft])
+
+  
 
   return (
     <View style={styles.container}>
-      <Text>Time: {SecondsLeft}</Text>
-      {/* TimeFormatted */}
-      <Button
-        title="Start"
+      <Text id="Title" style={styles.Title} allowFontScaling={false}>{BreakOrWorkTime}</Text>
+      <Text id="Time" style={styles.Time} allowFontScaling={false}>{SecondsLeft}</Text>
+
+      <Button 
+        id="StartPauseButton"
+        allowFontScaling={false}
+        style={styles.StartPauseButton}
+        title={ButtonText}
         onPress={() => {
           TurnTimerOnOrOff()
         }}
@@ -148,11 +163,22 @@ export default function Timer(props) {
   function TurnTimerOnOrOff() {
     if (IsTimerOn == true) {
       SetIsTimerOn(false)
+      SetButtonText("Start")
+      TimerSettingsDatabase.transaction(tx => {
+        tx.executeSql(
+          "UPDATE TimerSettings SET Value='false' WHERE Setting='IsTimerOn'",
+        )
+      })
     } 
     else {
       SetIsTimerOn(true)
+      SetButtonText("Pause")
+      TimerSettingsDatabase.transaction(tx => {
+        tx.executeSql(
+          "UPDATE TimerSettings SET Value='true' WHERE Setting='IsTimerOn'",
+        )
+      })
     }
-    
   }
 }
 
@@ -163,7 +189,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  Text: {
-    color: 'white',
-  },
+  Title: {
+    fontSize: 50
+  }, 
 })

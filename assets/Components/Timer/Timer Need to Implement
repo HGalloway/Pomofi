@@ -1,0 +1,27 @@
+  const [TimeFormatted, SetFormattedTime] = useState()
+  
+  var Hours
+  var Minutes
+  var Seconds
+  function FormatSecondsLeft() {
+    var dateObj = new Date(SecondsLeft * 1000)
+    Hours = dateObj.getUTCHours()
+    Minutes = dateObj.getUTCMinutes()
+    Seconds = dateObj.getSeconds()
+    CheckForSingleDigits()
+    SetFormattedTime(
+      Hours.toString() + ':' + Minutes.toString() + ':' + Seconds.toString(),
+    )
+  }
+
+  function CheckForSingleDigits() {
+    if (Hours.toString().length == 1) {
+      Hours = '0' + Hours
+    }
+    if (Minutes.toString().length == 1) {
+      Minutes = '0' + Minutes
+    }
+    if (Seconds.toString().length == 1) {
+      Seconds = '0' + Seconds
+    }
+  }
