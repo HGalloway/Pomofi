@@ -1,14 +1,26 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { AppState, StyleSheet, Text, View, Button } from 'react-native'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import * as SQLite from 'expo-sqlite';
 
-const StoreValueInStorage = async (key, value) => {
-  try {
-    await AsyncStorage.setItem(key, value)
-  } catch (e) {
-    // saving error
-  }
-}
+const TimerSettingsDatabase = SQLite.openDatabase("TimerSettings");
+
+TimerSettingsDatabase.transaction(tx => {
+  tx.executeSql(
+    "create table if not exists TimerSettings (Setting varchar(65535), Value varchar(65535))",
+    [],
+    (t, Output) => {console.log("Success: " + JSON.stringify(Output))},
+    (t, Error) => {console.log("Fail: " + Error)}
+  );
+})
+
+TimerSettingsDatabase.transaction(tx => {
+  tx.executeSql(
+    "select * from TimerSettings",
+    [],
+    (t, Output) => {console.log("Success: " + JSON.stringify(Output))},
+    (t, Error) => {console.log("Fail: " + Error)}
+  );
+})
 
 export default function Timer(props) {
   const [SecondsLeft, SetSecondsLeft] = useState()
@@ -16,12 +28,13 @@ export default function Timer(props) {
   const [IsTimerOn, SetIsTimerOn] = useState()
   const [TimeGoingIntoBackground, SetTimeGoingIntoBackground] = useState()
 
+  
+  
   useEffect(async () => {
     console.log("Setting Var")
     //Set State Variables
     SetSecondsLeft(props.Time)
     SetIsTimerOn(false)
-    console.log(IsTimerOn)
 
     //Background/Foreground Handler
     const subscription = AppState.addEventListener(
@@ -45,8 +58,7 @@ export default function Timer(props) {
   }
 
   const SaveDiffrenceVariables = async () => {
-    await AsyncStorage.setItem("BackgroundTime", JSON.stringify(Date.now()))
-    await AsyncStorage.setItem("IsTimerOn", IsTimerOn)
+
     
   }
 
@@ -58,8 +70,8 @@ export default function Timer(props) {
   }
 
   const GetDifferenceVariables = async () => {
-    BackgroundTime = await AsyncStorage.getItem("BackgroundTime").then((Value) => {return Value})
-    TimerOn = await AsyncStorage.getItem("Timer").then((Value) => {return Value})
+    // BackgroundTime = await AsyncStorage.getItem("BackgroundTime").then((Value) => {return Value})
+    // TimerOn
     CurrentTime = Date.now() 
     console.log("TimerOn: " + TimerOn)
   }
@@ -67,6 +79,17 @@ export default function Timer(props) {
   useEffect(() => {
     FormatSecondsLeft()
   }, [SecondsLeft])
+
+  useEffect(() => {
+    TimerSettingsDatabase.transaction(tx => {
+      tx.executeSql(
+        "insert into TimerSettings (setting, value) values ('IsTimerOn', '" + IsTimerOn + "')",
+        [],
+        (t, Output) => {console.log("Success: " + JSON.stringify(Output))},
+        (t, Error) => {console.log("Fail: " + Error)}
+      );
+    })
+  }, [IsTimerOn])
 
   var Hours
   var Minutes
@@ -125,9 +148,11 @@ export default function Timer(props) {
   function TurnTimerOnOrOff() {
     if (IsTimerOn == true) {
       SetIsTimerOn(false)
-    } else {
+    } 
+    else {
       SetIsTimerOn(true)
     }
+    
   }
 }
 
