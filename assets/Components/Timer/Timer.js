@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { AppState, StyleSheet, Text, View } from 'react-native'
 import Button from 'react-native-button'
+import * as SVG from 'react-native-svg'
 import * as SQLite from 'expo-sqlite';
+import PercentageCircle from '@ikonintegration/react-native-percentage-circle';
 
 const TimerSettingsDatabase = SQLite.openDatabase("TimerSettings");
 
@@ -146,8 +148,12 @@ export default function Timer(props) {
 
   return (
     <View style={styles.container}>
-      <Text id="Title" style={styles.Title} allowFontScaling={false}>{BreakOrWorkTime}</Text>
-      <Text id="Time" style={styles.Time} allowFontScaling={false}>{SecondsLeft}</Text>
+      <PercentageCircle radius={150} percent={20} color={"#3498db"}>
+        <Text id="Title" style={styles.Title} allowFontScaling={false}>{BreakOrWorkTime}</Text>
+        <View style={{padding:20}}></View>
+        <Text id="Time" style={styles.Time} allowFontScaling={false}>{SecondsLeft}</Text>
+      </PercentageCircle>  
+      
       <View id='Break' style={styles.Break}/>
       <Button 
         id="StartPauseButton"
@@ -186,16 +192,24 @@ export default function Timer(props) {
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
     width: '100%',
     height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   Title: {
-    fontSize: 50
+    fontSize: 50,
+    position: 'absolute',
+    flex: 0,
+    padding: 20,
+
   }, 
   Time: {
-    fontSize: 40
+    fontSize: 40,
+    position: 'absolute',
+    flex: 0,
+    padding: 20,
   },  
   StartPauseButton: {
     fontSize: 40,
