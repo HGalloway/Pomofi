@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Settings from './assets/Screens/Settings';
@@ -12,6 +12,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  
+
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={({ route }) => ({

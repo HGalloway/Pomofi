@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { AppState, StyleSheet, Text, View, Button } from 'react-native'
+import { AppState, StyleSheet, Text, View } from 'react-native'
+import Button from 'react-native-button'
 import * as SQLite from 'expo-sqlite';
 
 const TimerSettingsDatabase = SQLite.openDatabase("TimerSettings");
@@ -147,16 +148,17 @@ export default function Timer(props) {
     <View style={styles.container}>
       <Text id="Title" style={styles.Title} allowFontScaling={false}>{BreakOrWorkTime}</Text>
       <Text id="Time" style={styles.Time} allowFontScaling={false}>{SecondsLeft}</Text>
-
+      <View id='Break' style={styles.Break}/>
       <Button 
         id="StartPauseButton"
         allowFontScaling={false}
         style={styles.StartPauseButton}
-        title={ButtonText}
         onPress={() => {
           TurnTimerOnOrOff()
         }}
-      />
+      >
+        {ButtonText}
+      </Button>
     </View>
   )
 
@@ -192,4 +194,17 @@ const styles = StyleSheet.create({
   Title: {
     fontSize: 50
   }, 
+  Time: {
+    fontSize: 40
+  },  
+  StartPauseButton: {
+    fontSize: 40,
+    borderColor: "rgb(0, 0, 0)",
+    borderWidth: 2,
+    borderRadius: 20,
+    padding: 20,
+  },
+  Break: {
+    padding: 50,
+  }
 })
