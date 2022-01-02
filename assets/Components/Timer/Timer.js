@@ -148,23 +148,27 @@ export default function Timer(props) {
 
   return (
     <View style={styles.container}>
-      <PercentageCircle radius={150} percent={20} color={"#3498db"}>
-        <Text id="Title" style={styles.Title} allowFontScaling={false}>{BreakOrWorkTime}</Text>
-        <View style={{padding:20}}></View>
-        <Text id="Time" style={styles.Time} allowFontScaling={false}>{SecondsLeft}</Text>
-      </PercentageCircle>  
+      <View id="ProgressCircleAndTimerContainer" style={styles.ProgressCircleAndTimerContainer}>
+        <PercentageCircle radius={150} percent={SecondsLeft} color={"#FFCAF2"} shadowColor={"#660066"} borderWidth={20} style={styles.ProgressWheel}>
+          <View style={{alignItems: 'center'}}>
+            <Text id="Title" style={styles.Title} allowFontScaling={false}>{BreakOrWorkTime}</Text>
+            <Text id="Time" style={styles.Time} allowFontScaling={false}>00:00:{SecondsLeft}</Text>
+          </View>
+        </PercentageCircle>  
+      </View>
       
-      <View id='Break' style={styles.Break}/>
-      <Button 
-        id="StartPauseButton"
-        allowFontScaling={false}
-        style={styles.StartPauseButton}
-        onPress={() => {
-          TurnTimerOnOrOff()
-        }}
-      >
-        {ButtonText}
-      </Button>
+      <View id="StartPauseButtonContainer" style={styles.StartPauseButtonContainer}>
+        <Button 
+          id="StartPauseButton"
+          allowFontScaling={false}
+          style={styles.StartPauseButton}
+          onPress={() => {
+            TurnTimerOnOrOff()
+          }}
+        >
+          {ButtonText}
+        </Button>
+      </View>
     </View>
   )
 
@@ -194,31 +198,47 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     width: '100%',
-    height: '50%',
-    justifyContent: 'center',
+    height: '100%',
+    justifyContent: "space-evenly",
     alignItems: 'center',
+  },
+  ProgressCircleAndTimerContainer: {
+    alignItems: 'center',
+    flex: 2,
+    margin: 40,
+
+  },
+  ProgressWheel: {
+    alignItems: 'center',
+    borderWidth: 30,
   },
   Title: {
     fontSize: 50,
     position: 'absolute',
     flex: 0,
-    padding: 20,
-
+    margin: -60
   }, 
   Time: {
     fontSize: 40,
     position: 'absolute',
     flex: 0,
-    padding: 20,
+    margin: 20
   },  
+  StartPauseButtonContainer: {
+    alignItems: 'center',
+    flex: 1,
+    borderColor: "#ffff",
+    margin: 40,
+  },
   StartPauseButton: {
     fontSize: 40,
-    borderColor: "rgb(0, 0, 0)",
-    borderWidth: 2,
+    backgroundColor: "#FFCAF2",
+    borderWidth: 1,
     borderRadius: 20,
     padding: 20,
+    paddingRight: 30,
+    paddingLeft: 30,
+    marginTop: -100,
+    overflow: "hidden"
   },
-  Break: {
-    padding: 50,
-  }
 })

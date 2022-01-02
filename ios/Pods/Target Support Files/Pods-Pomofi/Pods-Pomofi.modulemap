@@ -1,0 +1,6 @@
+module Pods_Pomofi {
+  umbrella header "Pods-Pomofi-umbrella.h"
+
+  export *
+  module * { export * }
+}
