@@ -41,6 +41,14 @@ export default function Timer(props) {
       tx.executeSql(
         "insert into TimerSettings (setting, value) values ('SecondsLeft', '" + props.Time + "')",
       );
+      tx.executeSql(
+        "select * from TimerSettings",
+        [],
+        (t, Output) => {
+          console.log("Output: " + Output)
+        },
+        (t, Error) => {console.log("Fail: " + Error)}
+      )
     })
 
     //Background/Foreground Handler
@@ -62,6 +70,7 @@ export default function Timer(props) {
           "select * from TimerSettings",
           [],
           (t, Output) => {
+            console.log("Bonk")
             UpdateTime(Output)
           },
           (t, Error) => {console.log("Fail: " + Error)}
@@ -79,6 +88,7 @@ export default function Timer(props) {
 
  
   function UpdateTime(SQLOutput) {
+    console.log(SQLOutput)
     var TimerOn = JSON.parse(Object.values(SQLOutput.rows.item(0))[1])
     var BackgroundTime = Object.values(SQLOutput.rows.item(1))[1]
     var SecondsLeftBeforeBackgrounded = Object.values(SQLOutput.rows.item(2))[1]
@@ -144,28 +154,52 @@ export default function Timer(props) {
     })
   }, [SecondsLeft])
 
-  
+  function CurrentPercentage() {
+    if (BreakOrWorkTime == "Work") {
+      return (100 * SecondsLeft) / props.WorkTime
+    }
+    else if (BreakOrWorkTime == "Break"){
+      return (100 * SecondsLeft) / props.BreakTime
+    }
+  }
+
+  var Hours
+  var Minutes
+  var Seconds
+  function FormatTime(SecondsLeft) {
+    var dateObj = new Date(SecondsLeft * 1000)
+    Hours = dateObj.getUTCHours()
+    Minutes = dateObj.getUTCMinutes()
+    Seconds = dateObj.getSeconds()
+    CheckForSingleDigits()
+    return Hours.toString() + ':' + Minutes.toString() + ':' + Seconds.toString()
+  }
+
+  function CheckForSingleDigits() {
+    if (Hours.toString().length == 1) {
+      Hours = '0' + Hours
+    }
+    if (Minutes.toString().length == 1) {
+      Minutes = '0' + Minutes
+    }
+    if (Seconds.toString().length == 1) {
+      Seconds = '0' + Seconds
+    }
+  }
 
   return (
     <View style={styles.container}>
       <View id="ProgressCircleAndTimerContainer" style={styles.ProgressCircleAndTimerContainer}>
-        <PercentageCircle radius={150} percent={SecondsLeft} color={"#FFCAF2"} shadowColor={"#660066"} borderWidth={20} style={styles.ProgressWheel}>
+        <PercentageCircle radius={150} percent={CurrentPercentage()} color={"#FFCAF2"} shadowColor={"#660066"} borderWidth={20} style={styles.ProgressWheel}>
           <View style={{alignItems: 'center'}}>
             <Text id="Title" style={styles.Title} allowFontScaling={false}>{BreakOrWorkTime}</Text>
-            <Text id="Time" style={styles.Time} allowFontScaling={false}>00:00:{SecondsLeft}</Text>
+            <Text id="Time" style={styles.Time} allowFontScaling={false}>{FormatTime(SecondsLeft)}</Text>
           </View>
         </PercentageCircle>  
       </View>
       
       <View id="StartPauseButtonContainer" style={styles.StartPauseButtonContainer}>
-        <Button 
-          id="StartPauseButton"
-          allowFontScaling={false}
-          style={styles.StartPauseButton}
-          onPress={() => {
-            TurnTimerOnOrOff()
-          }}
-        >
+        <Button id="StartPauseButton" allowFontScaling={false} style={styles.StartPauseButton} onPress={() => { TurnTimerOnOrOff() }}>
           {ButtonText}
         </Button>
       </View>
@@ -206,7 +240,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 2,
     margin: 40,
-
   },
   ProgressWheel: {
     alignItems: 'center',
