@@ -12,8 +12,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  
-
   return (
     <NavigationContainer>
       <Tab.Navigator screenOptions={({ route }) => ({
@@ -37,7 +35,7 @@ export default function App() {
         tabBarAllowFontScaling: false,
       })}>
         <Tab.Screen name="Pomo" component={Pomo}/>
-        <Tab.Screen name="Meditation" component={Meditation}/>
+        {/* <Tab.Screen name="Meditation" component={Meditation}/> */}
         <Tab.Screen name="Settings" component={Settings}/>
       </Tab.Navigator>
     </NavigationContainer>

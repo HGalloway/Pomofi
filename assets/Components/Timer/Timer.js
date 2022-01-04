@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { AppState, StyleSheet, Text, View } from 'react-native'
 import Button from 'react-native-button'
-import * as SVG from 'react-native-svg'
 import * as SQLite from 'expo-sqlite';
 import PercentageCircle from '@ikonintegration/react-native-percentage-circle';
 
@@ -9,10 +8,10 @@ const TimerSettingsDatabase = SQLite.openDatabase("TimerSettings");
 
 TimerSettingsDatabase.transaction(tx => {
   tx.executeSql(
-    "create table if not exists TimerSettings (Setting varchar(65535), Value varchar(65535))",
+    "drop table TimerSettings"
   );
   tx.executeSql(
-    "delete from TimerSettings",
+    "create table if not exists TimerSettings (Setting varchar(65535), Value varchar(65535))",
   );
 })
 
@@ -24,6 +23,8 @@ export default function Timer(props) {
   const [ButtonText, SetButtonText] = useState("Start")
   const [BreakOrWorkTime, SetBreakOrWorkTime] = useState("Work")
 
+  
+
   useEffect(async () => {
     console.log("Setting Var")
     //Set State Variables
@@ -33,23 +34,15 @@ export default function Timer(props) {
     //Set Settings in database
     TimerSettingsDatabase.transaction(tx => {
       tx.executeSql(
-        "insert into TimerSettings (setting, value) values ('IsTimerOn', 'false')",
+        "insert into TimerSettings (Setting, Value) values ('IsTimerOn', 'false')",
       );
       tx.executeSql(
-        "insert into TimerSettings (setting, value) values ('BackgroundTime', '')",
+        "insert into TimerSettings (Setting, Value) values ('BackgroundTime', '')",
       );
       tx.executeSql(
-        "insert into TimerSettings (setting, value) values ('SecondsLeft', '" + props.Time + "')",
+        "insert into TimerSettings (Setting, Value) values ('SecondsLeft', '" + props.Time + "')",
       );
-      tx.executeSql(
-        "select * from TimerSettings",
-        [],
-        (t, Output) => {
-          console.log("Output: " + Output)
-        },
-        (t, Error) => {console.log("Fail: " + Error)}
-      )
-    })
+    }, (error) => {console.log("Fail: " + error)})
 
     //Background/Foreground Handler
     const subscription = AppState.addEventListener(
@@ -70,7 +63,6 @@ export default function Timer(props) {
           "select * from TimerSettings",
           [],
           (t, Output) => {
-            console.log("Bonk")
             UpdateTime(Output)
           },
           (t, Error) => {console.log("Fail: " + Error)}
@@ -85,17 +77,13 @@ export default function Timer(props) {
       })
    }
   }
-
  
   function UpdateTime(SQLOutput) {
-    console.log(SQLOutput)
     var TimerOn = JSON.parse(Object.values(SQLOutput.rows.item(0))[1])
     var BackgroundTime = Object.values(SQLOutput.rows.item(1))[1]
     var SecondsLeftBeforeBackgrounded = Object.values(SQLOutput.rows.item(2))[1]
     var SecondsDifference = Math.floor((Date.now() - BackgroundTime)/1000)
     
-    console.log("Seconds Left Before Back: " + SecondsLeftBeforeBackgrounded)
-
     if (TimerOn == true) {
       var SecondsDifference = Math.floor((Date.now() - BackgroundTime)/1000)
       var SecondsLeftAfterDiffy = SecondsLeftBeforeBackgrounded - SecondsDifference
@@ -199,7 +187,7 @@ export default function Timer(props) {
       </View>
       
       <View id="StartPauseButtonContainer" style={styles.StartPauseButtonContainer}>
-        <Button id="StartPauseButton" allowFontScaling={false} style={styles.StartPauseButton} onPress={() => { TurnTimerOnOrOff() }}>
+        <Button id="StartPauseButton" allowFontScaling={false} style={styles.StartPauseButton} color="#000000" onPress={() => { TurnTimerOnOrOff() }}>
           {ButtonText}
         </Button>
       </View>
@@ -272,6 +260,7 @@ const styles = StyleSheet.create({
     paddingRight: 30,
     paddingLeft: 30,
     marginTop: -100,
-    overflow: "hidden"
+    overflow: "hidden",
+    // fontFamily: "Comic",
   },
 })

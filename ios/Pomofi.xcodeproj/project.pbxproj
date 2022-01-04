@@ -31,6 +31,10 @@
 		C81A8B8B27814463B9141B08 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 298F73A80ADB483E95CB13DD /* Octicons.ttf */; };
 		8AB9E55D0DB54456BDFB01A7 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 22AF3B07AB7F4279BF99114C /* SimpleLineIcons.ttf */; };
 		E628EB8B74724327AF6DB52E /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6F49AD3A82B7491FBFF78A78 /* Zocial.ttf */; };
+		BFFE2DB9BD594F2986238AF6 /* Basic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF8E0CC7135A41F7A3D4AB13 /* Basic-Regular.ttf */; };
+		B03B8B20E70840979B2F153E /* Basic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D1FF430F1234FA8A540ABCD /* Basic-Regular.ttf */; };
+		770B3D2DFF1C486592539C95 /* BadComic-MVw8P.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AB4D985E3D7F4CA5B9A96E6B /* BadComic-MVw8P.ttf */; };
+		396DC6D750B24DCDB5CABE69 /* SundiaryDemo-2OgdK.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EFEABDD9A35B43C5A0A502AE /* SundiaryDemo-2OgdK.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +70,10 @@
 		298F73A80ADB483E95CB13DD /* Octicons.ttf */ = {isa = PBXFileReference; name = "Octicons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		22AF3B07AB7F4279BF99114C /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; name = "SimpleLineIcons.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		6F49AD3A82B7491FBFF78A78 /* Zocial.ttf */ = {isa = PBXFileReference; name = "Zocial.ttf"; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DF8E0CC7135A41F7A3D4AB13 /* Basic-Regular.ttf */ = {isa = PBXFileReference; name = "Basic-Regular.ttf"; path = "../assets/fonts/Basic-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9D1FF430F1234FA8A540ABCD /* Basic-Regular.ttf */ = {isa = PBXFileReference; name = "Basic-Regular.ttf"; path = "../assets/Fonts/Basic-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		AB4D985E3D7F4CA5B9A96E6B /* BadComic-MVw8P.ttf */ = {isa = PBXFileReference; name = "BadComic-MVw8P.ttf"; path = "../assets/Fonts/BadComic-MVw8P.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EFEABDD9A35B43C5A0A502AE /* SundiaryDemo-2OgdK.ttf */ = {isa = PBXFileReference; name = "SundiaryDemo-2OgdK.ttf"; path = "../assets/Fonts/SundiaryDemo-2OgdK.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +198,10 @@
 				298F73A80ADB483E95CB13DD /* Octicons.ttf */,
 				22AF3B07AB7F4279BF99114C /* SimpleLineIcons.ttf */,
 				6F49AD3A82B7491FBFF78A78 /* Zocial.ttf */,
+				DF8E0CC7135A41F7A3D4AB13 /* Basic-Regular.ttf */,
+				9D1FF430F1234FA8A540ABCD /* Basic-Regular.ttf */,
+				AB4D985E3D7F4CA5B9A96E6B /* BadComic-MVw8P.ttf */,
+				EFEABDD9A35B43C5A0A502AE /* SundiaryDemo-2OgdK.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -274,6 +286,10 @@
 				C81A8B8B27814463B9141B08 /* Octicons.ttf in Resources */,
 				8AB9E55D0DB54456BDFB01A7 /* SimpleLineIcons.ttf in Resources */,
 				E628EB8B74724327AF6DB52E /* Zocial.ttf in Resources */,
+				BFFE2DB9BD594F2986238AF6 /* Basic-Regular.ttf in Resources */,
+				B03B8B20E70840979B2F153E /* Basic-Regular.ttf in Resources */,
+				770B3D2DFF1C486592539C95 /* BadComic-MVw8P.ttf in Resources */,
+				396DC6D750B24DCDB5CABE69 /* SundiaryDemo-2OgdK.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
